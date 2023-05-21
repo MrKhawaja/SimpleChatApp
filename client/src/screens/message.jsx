@@ -4,7 +4,7 @@ import backendLink from "../settings";
 import Message from "../components/message";
 import { useJwt } from "react-jwt"
 
-const MessageScreen = ({ token }) => {
+const MessageScreen = ({ token,user }) => {
   function sendMessage(message, e) {
     e.preventDefault();
     if (message != "") {
@@ -29,10 +29,8 @@ const MessageScreen = ({ token }) => {
   const [message, setMessage] = useState("");
   const [messagesEnd, setMessagesEnd] = useState();
   const [socket, setSocket] = useState(null);
-  const [username, setUsername] = useState("")
   useEffect(() => {
     
-    console.log(decodedToken)
     setSocket(io(backendLink, { auth: { token } }));
     fetch(backendLink + "/messages", {
       method: "GET",
@@ -82,7 +80,7 @@ const MessageScreen = ({ token }) => {
           overflowY:"scroll"
         }} >
         {messages.map((message, i) => (
-        <Message message={message} self={message.username == username} key={"message_" + i.toString()} />
+        <Message message={message} self={message.username == user.username} key={"message_" + i.toString()} />
       ))}        
         <div
           style={{ float: "left", clear: "both" }}

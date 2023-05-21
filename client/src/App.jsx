@@ -2,18 +2,20 @@ import logo from "./logo.svg";
 import React, { useState, useEffect } from "react";
 import MessageScreen from "./screens/message";
 import LoginScreen from "./screens/login";
-import { useJwt } from "react-jwt";
+import { decodeToken, useJwt } from "react-jwt";
 function App() {
   const [token, setToken] = useState("");
-  const[username,setUsername]=useState("")
+  const [user,setUser] = useState({});
   useEffect(() => {
     const tok = localStorage.getItem("token");
     if (tok != "" && tok != null) {
+      const usr = decodeToken(tok)
+      setUser(usr)
       setToken(tok)
     }
   }, []);
-  if (token == "") return (<LoginScreen setToken={setToken} />)
-    else return(<MessageScreen token={token} />)
+  if (token == "") return (<LoginScreen setToken={setToken} setUser={setUser} />)
+    else return(<MessageScreen token={token} user = {user} />)
   }
 
 const styles = {

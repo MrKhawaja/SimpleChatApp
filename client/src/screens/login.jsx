@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Component } from "react";
+import { decodeToken } from "react-jwt";
 import backendLink from '../settings'
-const LoginScreen=({ setToken })=> {
+const LoginScreen=({ setToken,setUser })=> {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const login = (e,username, password) => {
@@ -16,7 +17,13 @@ const LoginScreen=({ setToken })=> {
           'password': password
         })
       }).then(res => {
-        if (res.ok) { res.text().then(data => { localStorage.setItem('token', data); setToken(data); }); }
+        if (res.ok) { res.text().then(data => { 
+          localStorage.setItem('token', data) 
+          setToken(data)
+          const user =  decodeToken(data)
+          setUser(user)
+          
+        }); }
         else { setUsername("Invalid Credentials"); setPassword(""); }
       });
     }
@@ -32,13 +39,14 @@ const LoginScreen=({ setToken })=> {
         </div>
         <div className={"row d-flex justify-content-center"}>
           <div className={"col-md-6 col-xl-4"}>
-            <div className={"card mb-5"}>
+            <div className={"card mb-5"} style={{background:"var(--bs-indigo)"}}>
               <div
                 className={"card-body d-flex flex-column align-items-center"}
                 style={{marginTop: "19px", marginBottom: "22px"}}
               >
                 <div
                   className={"bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"}
+                  style={{background:"black"}}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +83,7 @@ const LoginScreen=({ setToken })=> {
                     />
                   </div>
                   <div className={"mb-3"}>
-                    <button className={"btn btn-primary d-block w-100"} type={"submit"}>
+                    <button className={"btn btn-dark d-block w-100"} type={"submit"}>
                       Login
                     </button>
                   </div>
