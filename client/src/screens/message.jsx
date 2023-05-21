@@ -54,7 +54,7 @@ const MessageScreen = ({ token,user }) => {
 
   return (
     <div
-      className={"container d-flex flex-column align-items-center"}
+      className={"container chat-container d-flex flex-column align-items-start  "}
       style={{
         // backgroundImage: "url(/assets/img/chat-background.svg)",
         background: "var(--bs-indigo)",
@@ -69,7 +69,7 @@ const MessageScreen = ({ token,user }) => {
 
 
 
-    <div id={"messages-display"} className={"d-flex flex-column justify-content-md-start align-items-md-start"}
+    <div id={"messages-display"} className={"d-flex flex-column align-items-start justify-content-md-start "}
         style={{
           width: "100%",
           height: "550px",
@@ -97,6 +97,7 @@ const MessageScreen = ({ token,user }) => {
           background: "rgba(0,0,0,0)",
           marginTop: "1px",
           display: "flex",
+          height: "40px",
         }}
       >
         <input

@@ -18,6 +18,7 @@ const Message = ({ message, self }) => {
           paddingBottom: "11px",
           paddingLeft: "14px",
           marginRight: "6px",
+          boxShadow: "0px 0px 9px 2px rgba(0,0,0,0.25)",
         }}
       >
         <div

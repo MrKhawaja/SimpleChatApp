@@ -62,3 +62,14 @@ body{
   background-size: contain; */
   background: black;
 }
+
+@media screen and (max-width: 450px) {
+  .chat-container{
+    width: 100vw!important;
+    height:100vh;
+    margin:0!important;
+  }
+  .chat-container #messages-display{
+    height: calc(100vh - 40px)!important;
+  }
+}
