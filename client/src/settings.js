@@ -1,4 +1,4 @@
 
-const backendLink = "http://192.168.1.57:5000"
+const backendLink = "http://localhost:5000"
 
 module.exports = backendLink

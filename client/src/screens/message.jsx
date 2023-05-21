@@ -1,12 +1,14 @@
 import React, { useState, useEffect, Component } from "react";
 import { io } from "socket.io-client";
-import backendLink from '../settings'
+import backendLink from "../settings";
+import Message from "../components/message";
+import { useJwt } from "react-jwt"
 
 const MessageScreen = ({ token }) => {
   function sendMessage(message, e) {
     e.preventDefault();
     if (message != "") {
-      fetch(backendLink+"/messages", {
+      fetch(backendLink + "/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -22,13 +24,17 @@ const MessageScreen = ({ token }) => {
   const scrollToBottom = () => {
     if (messagesEnd != null) messagesEnd.scrollIntoView({ behavior: "smooth" });
   };
+  const { decodedToken, isExpired } = useJwt(token);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [messagesEnd, setMessagesEnd] = useState();
   const [socket, setSocket] = useState(null);
+  const [username, setUsername] = useState("")
   useEffect(() => {
+    
+    console.log(decodedToken)
     setSocket(io(backendLink, { auth: { token } }));
-    fetch(backendLink+"/messages", {
+    fetch(backendLink + "/messages", {
       method: "GET",
       headers: { token: token },
     })
@@ -38,23 +44,46 @@ const MessageScreen = ({ token }) => {
 
   useEffect(
     () => {
-      if (socket != null){
-      socket.on("message", (data) => {
-        setMessages([...messages, data]);
-      });}
+      if (socket != null) {
+        socket.on("message", (data) => {
+          setMessages([...messages, data]);
+        });
+      }
     },
-    [socket,messages],
+    [socket, messages],
     scrollToBottom()
   );
 
   return (
-    <>
-      <div style={styles.messages}>
+    <div
+      className={"container d-flex flex-column align-items-center"}
+      style={{
+        // backgroundImage: "url(/assets/img/chat-background.svg)",
+        background: "var(--bs-indigo)",
+        backgroundSize:"contain",
+        width: "369px",
+        paddingLeft: "0px",
+        paddingRight: "0px",
+        marginTop: "71px",
+        paddingTop: "10px",
+      }}
+    >
+
+
+
+    <div id={"messages-display"} className={"d-flex flex-column justify-content-md-start align-items-md-start"}
+        style={{
+          width: "100%",
+          height: "550px",
+          background: "rgba(0, 0, 0, 0)",
+          color: "var(--bs-dark)",
+          display: "flex",
+          overflowX: "hidden",
+          overflowY:"scroll"
+        }} >
         {messages.map((message, i) => (
-          <div key={"message_" + i.toString()} style={styles.message}>
-            {message.username} : {message.message}
-          </div>
-        ))}
+        <Message message={message} self={message.username == username} key={"message_" + i.toString()} />
+      ))}        
         <div
           style={{ float: "left", clear: "both" }}
           ref={(el) => {
@@ -63,78 +92,33 @@ const MessageScreen = ({ token }) => {
         />
       </div>
       <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "90%",
-        }}
         onSubmit={(e) => sendMessage(message, e)}
+        style={{
+          minWidth: "100%",
+          width: "100%",
+          background: "rgba(0,0,0,0)",
+          marginTop: "1px",
+          display: "flex",
+        }}
       >
         <input
           autoFocus
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          type="text"
-          style={styles.input}
+          className={"form-control"}
+          type={"text"}
+          style={{ display: "block", outline: "none",borderRadius:"0px" }}
         />
-        <button type="submit" style={styles.send}>
-          Send
+        <button
+          className={"btn btn-primary"}
+          type={"submit"}
+          style={{ display: "block",borderRadius:"0px" }}
+        >
+          &gt;
         </button>
       </form>
-    </>
+    </div>
   );
-};
-
-const styles = {
-  main: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    background: "linear-gradient(to right, #5f2c82, #49a09d)",
-  },
-  form: {
-    height: "40rem",
-    width: "30rem",
-    background: "rgba(0, 0, 0, 0.3)",
-    borderRadius: "0.5rem",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    background: "#00000069",
-    color: "white",
-    padding: ".4rem",
-    display: "block",
-    width: "80%",
-    marginBottom: "1rem",
-    fontSize: "1.2rem",
-  },
-  send: {
-    fontSize: "1.2rem",
-    display: "block",
-    background: "rgb(165 45 255)",
-    borderRadius: "0.5rem",
-    padding: ".4rem",
-    width: "50%",
-    cursor: "pointer",
-  },
-  messages: {
-    height: "25rem",
-    width: "80%",
-    padding: "0.8rem",
-    overflowY: "scroll",
-    background: "#00000069",
-    marginBottom: "1rem",
-  },
-  message: {
-    color: "white",
-    fontSize: "1.2rem",
-  },
 };
 
 export default MessageScreen;

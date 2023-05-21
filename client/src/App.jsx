@@ -1,24 +1,20 @@
 import logo from "./logo.svg";
-import "./App.css";
 import React, { useState, useEffect } from "react";
 import MessageScreen from "./screens/message";
-import SelectUserScreen from "./screens/selectuser";
+import LoginScreen from "./screens/login";
+import { useJwt } from "react-jwt";
 function App() {
   const [token, setToken] = useState("");
+  const[username,setUsername]=useState("")
   useEffect(() => {
     const tok = localStorage.getItem("token");
     if (tok != "" && tok != null) {
       setToken(tok)
     }
   }, []);
-  return (
-    <div style={styles.main}>
-      <div style={styles.form}>
-        {token == "" ? <SelectUserScreen setToken={setToken} /> : <MessageScreen token={token}  />}
-      </div>
-    </div>
-  );
-}
+  if (token == "") return (<LoginScreen setToken={setToken} />)
+    else return(<MessageScreen token={token} />)
+  }
 
 const styles = {
   main: {
